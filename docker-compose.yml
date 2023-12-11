@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  kollok:
+    build: ./Kalsite
+    container_name: kollok
+    hostname: kollok
+    networks:
+      - nginx_net
+    expose:
+      - 8081
+    restart: always
+
   nginx:
     container_name: nginx
     image: nginx:latest
@@ -31,17 +41,8 @@ services:
       - ./data/certbot/www:/var/www/certbot
     networks:
       - nginx_net
+      - default
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-  kollok:
-    build: ./Kalsite
-    container_name: kollok
-    hostname: kollok_site
-    networks:
-      - nginx_net
-    expose:
-      - 8081
-    restart: always
 
 networks:
   nginx_net:
