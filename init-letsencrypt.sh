@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=("kollok.pmc-python.ru")
+domains=("kollok.pmc-python.ru redmine.pmc-python.ru")
 email="ievchatov@inbox.ru" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
