@@ -1,2 +1,4 @@
 Kalsite/
 data/certbot/
+data/redmine_db_data/
+env/

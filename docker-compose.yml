@@ -53,7 +53,7 @@ services:
   redmine:
     container_name: redmine
     image: redmine:latest
-    hostname: redmine_site
+    hostname: redmine-site
     env_file:
       - env/redmine.env
     restart: always
@@ -61,8 +61,9 @@ services:
       - redmine_db
     expose:
       - 3000
-    networks: 
-     - redmine_net 
+    networks:
+     - redmine_net
+     - nginx_net
 
   redmine_db:
     container_name: redmine_db
@@ -71,12 +72,12 @@ services:
     env_file:
       - env/redmine_db.env
     volumes:
-      - data/redmine_db_data:/var/lib/postgresql/data
+      - ./data/redmine_db_data:/var/lib/postgresql/data
     restart: unless-stopped
     expose:
       - 5432
-    networks: 
-     - redmine_net 
+    networks:
+     - redmine_net
 
 networks:
   nginx_net:
