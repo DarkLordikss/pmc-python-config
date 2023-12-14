@@ -1,17 +1,6 @@
 version: '3.8'
 
 services:
-  kollok:
-    build: ./Kalsite
-    container_name: kollok
-    hostname: kollok-site
-    networks:
-      - nginx_net
-      - default
-    expose:
-      - 8081
-    restart: always
-
   nginx:
     container_name: nginx
     image: nginx:latest
@@ -19,6 +8,10 @@ services:
     networks:
       - nginx_net
       - default
+    depends_on:
+      - kollok
+      - redmine
+      - certbot
     volumes:
       - ./data/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./data/certbot/conf:/etc/letsencrypt
@@ -46,7 +39,49 @@ services:
       - default
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
+  kollok:
+    build: ./Kalsite
+    container_name: kollok
+    hostname: kollok-site
+    networks:
+      - nginx_net
+      - default
+    expose:
+      - 8081
+    restart: always
+
+  redmine:
+    container_name: redmine
+    image: redmine:latest
+    hostname: redmine_site
+    env_file:
+      - env/redmine.env
+    restart: always
+    depends_on:
+      - redmine_db
+    expose:
+      - 3000
+    networks: 
+     - redmine_net 
+
+  redmine_db:
+    container_name: redmine_db
+    image: postgres:latest
+    hostname: redmine_db
+    env_file:
+      - env/redmine_db.env
+    volumes:
+      - data/redmine_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    expose:
+      - 5432
+    networks: 
+     - redmine_net 
+
 networks:
   nginx_net:
     name: nginx_net
+    internal: true
+  redmine_net:
+    name: redmine_net
     internal: true
